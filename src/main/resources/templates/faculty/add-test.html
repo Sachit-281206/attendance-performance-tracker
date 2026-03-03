@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f8f9fa; }
+        .header { background: #28a745; color: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; color: #555; font-weight: bold; }
+        input[type="text"], input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        .back-btn { background: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Add New Test</h1>
+            <div>
+                <a href="/faculty/upload-marks" class="back-btn">← Back</a>
+                <a href="/logout" class="back-btn">Logout</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Test Details</h2>
+            <form th:action="@{/faculty/add-test}" method="post">
+                <div class="form-group">
+                    <label for="testName">Test Name:</label>
+                    <input type="text" id="testName" name="testName" required 
+                           placeholder="e.g., Mid Term Exam, Unit Test 1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="className">Class Name:</label>
+                    <input type="text" id="className" name="className" required 
+                           placeholder="e.g., 10th Grade, CSE-A">
+                </div>
+                
+                <div class="form-group">
+                    <label for="maxMarks">Maximum Marks:</label>
+                    <input type="number" id="maxMarks" name="maxMarks" required min="1" 
+                           placeholder="e.g., 100">
+                </div>
+                
+                <button type="submit">Create Test & Enter Marks</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

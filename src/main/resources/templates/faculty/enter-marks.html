@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Enter Marks</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f8f9fa; }
+        .header { background: #28a745; color: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .test-info { background: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; font-weight: bold; }
+        input[type="number"] { width: 80px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; }
+        button { background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 20px; }
+        button:hover { background: #0056b3; }
+        .back-btn { background: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Enter Marks</h1>
+            <div>
+                <a href="/faculty/upload-marks" class="back-btn">← Back</a>
+                <a href="/logout" class="back-btn">Logout</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="test-info">
+                <h3 th:text="'Test: ' + ${test.testName}"></h3>
+                <p><strong>Class:</strong> <span th:text="${test.className}"></span></p>
+                <p><strong>Maximum Marks:</strong> <span th:text="${test.maxMarks}"></span></p>
+            </div>
+            
+            <h3>Enter Marks for Students</h3>
+            <form th:action="@{/faculty/save-marks}" method="post">
+                <input type="hidden" name="testId" th:value="${test.id}">
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Username</th>
+                            <th>Marks Obtained</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="student : ${students}">
+                            <td th:text="${student.name}"></td>
+                            <td th:text="${student.username}"></td>
+                            <td>
+                                <input type="hidden" name="studentIds" th:value="${student.id}">
+                                <input type="number" name="marks" min="0" th:max="${test.maxMarks}" 
+                                       th:value="${existingMarksMap.get(student.id) != null ? existingMarksMap.get(student.id).marksObtained : ''}" 
+                                       placeholder="0" required>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <button type="submit">Save All Marks</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

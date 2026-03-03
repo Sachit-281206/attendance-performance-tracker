@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Attendance & Performance Tracker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .auth-container {
+            background: #f8f9fa;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            min-height: 600px;
+            display: flex;
+        }
+        
+        .auth-sidebar {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            flex: 1;
+            padding: 60px 40px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .auth-sidebar h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+        
+        .auth-sidebar p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .auth-main {
+            flex: 1;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: white;
+        }
+        
+        .role-tabs {
+            display: flex;
+            margin-bottom: 40px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            padding: 5px;
+        }
+        
+        .role-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .role-tab.active {
+            background: #28a745;
+            color: white;
+            box-shadow: 0 2px 10px rgba(40,167,69,0.3);
+        }
+        
+        .signup-form {
+            display: none;
+        }
+        
+        .signup-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #28a745;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(40,167,69,0.1);
+        }
+        
+        .signup-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .signup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40,167,69,0.3);
+        }
+        
+        .auth-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .auth-links a {
+            color: #28a745;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .auth-links a:hover {
+            color: #1e7e34;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+        
+        @media (max-width: 768px) {
+            .auth-container {
+                flex-direction: column;
+                max-width: 400px;
+            }
+            
+            .auth-sidebar {
+                padding: 40px 20px;
+            }
+            
+            .auth-main {
+                padding: 40px 20px;
+            }
+            
+            .auth-sidebar h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-sidebar">
+            <h1>Join Us Today</h1>
+            <p>Create your account to access the attendance and performance tracking system. Choose your role and get started.</p>
+        </div>
+        
+        <div class="auth-main">
+            <div class="role-tabs">
+                <div class="role-tab active" onclick="switchRole('student')">
+                     Student Signup
+                </div>
+                <div class="role-tab" onclick="switchRole('faculty')">
+                     Faculty Signup
+                </div>
+            </div>
+            
+            <div th:if="${error}" class="error-message" th:text="${error}"></div>
+            <div th:if="${success}" class="success-message" th:text="${success}"></div>
+            
+            <!-- Student Signup Form -->
+            <form class="signup-form active" id="student-form" th:action="@{/signup}" method="post">
+                <input type="hidden" name="role" value="STUDENT">
+                
+                <div class="form-group">
+                    <label for="student-name">Full Name</label>
+                    <input type="text" id="student-name" name="name" required 
+                           placeholder="Enter your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="student-username">Username</label>
+                    <input type="text" id="student-username" name="username" required 
+                           placeholder="Choose a username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="student-email">Email</label>
+                    <input type="email" id="student-email" name="email" required 
+                           placeholder="Enter your email address">
+                </div>
+                
+                <div class="form-group">
+                    <label for="student-password">Password</label>
+                    <input type="password" id="student-password" name="password" required 
+                           minlength="6" placeholder="Create a password (min 6 characters)">
+                </div>
+                
+                <button type="submit" class="signup-btn">Create Student Account</button>
+            </form>
+            
+            <!-- Faculty Signup Form -->
+            <form class="signup-form" id="faculty-form" th:action="@{/signup}" method="post">
+                <input type="hidden" name="role" value="FACULTY">
+                
+                <div class="form-group">
+                    <label for="faculty-name">Full Name</label>
+                    <input type="text" id="faculty-name" name="name" required 
+                           placeholder="Enter your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="faculty-username">Username</label>
+                    <input type="text" id="faculty-username" name="username" required 
+                           placeholder="Choose a username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="faculty-email">Email</label>
+                    <input type="email" id="faculty-email" name="email" required 
+                           placeholder="Enter your email address">
+                </div>
+                
+                <div class="form-group">
+                    <label for="faculty-password">Password</label>
+                    <input type="password" id="faculty-password" name="password" required 
+                           minlength="6" placeholder="Create a password (min 6 characters)">
+                </div>
+                
+                <button type="submit" class="signup-btn">Create Faculty Account</button>
+            </form>
+            
+            <div class="auth-links">
+                <p>Already have an account? <a href="/login">Sign in here</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function switchRole(role) {
+            // Update tabs
+            document.querySelectorAll('.role-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update forms
+            document.querySelectorAll('.signup-form').forEach(form => form.classList.remove('active'));
+            document.getElementById(role + '-form').classList.add('active');
+        }
+    </script>
+</body>
+</html>

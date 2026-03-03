@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Marks Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f8f9fa; }
+        .header { background: #007bff; color: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; font-weight: bold; }
+        .percentage { font-weight: bold; }
+        .high { color: #28a745; }
+        .medium { color: #ffc107; }
+        .low { color: #dc3545; }
+        .back-btn { background: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>My Marks Report</h1>
+            <div>
+                <a href="/student/dashboard" class="back-btn">← Back to Dashboard</a>
+                <a href="/logout" class="back-btn">Logout</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 th:text="'Marks for ' + ${student.name}"></h2>
+            
+            <div th:if="${#lists.isEmpty(marks)}">
+                <p>No marks available yet.</p>
+            </div>
+            
+            <div th:unless="${#lists.isEmpty(marks)}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Class</th>
+                            <th>Marks Obtained</th>
+                            <th>Max Marks</th>
+                            <th>Percentage</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="mark : ${marks}">
+                            <td th:text="${mark.test.testName}"></td>
+                            <td th:text="${mark.test.className}"></td>
+                            <td th:text="${mark.marksObtained}"></td>
+                            <td th:text="${mark.test.maxMarks}"></td>
+                            <td class="percentage" 
+                                th:classappend="${mark.percentage >= 80} ? 'high' : (${mark.percentage >= 60} ? 'medium' : 'low')"
+                                th:text="${#numbers.formatDecimal(mark.percentage, 1, 2)} + '%'"></td>
+                            <td th:text="${#temporals.format(mark.test.createdDate, 'dd-MM-yyyy')}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Attendance & Performance Tracker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .auth-container {
+            background: #f8f9fa;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            min-height: 600px;
+            display: flex;
+        }
+        
+        .auth-sidebar {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            flex: 1;
+            padding: 60px 40px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .auth-sidebar h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+        
+        .auth-sidebar p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .auth-main {
+            flex: 1;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: white;
+        }
+        
+        .role-tabs {
+            display: flex;
+            margin-bottom: 40px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            padding: 5px;
+        }
+        
+        .role-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .role-tab.active {
+            background: #007bff;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,123,255,0.3);
+        }
+        
+        .login-form {
+            display: none;
+        }
+        
+        .login-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,123,255,0.3);
+        }
+        
+        .auth-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .auth-links a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .auth-links a:hover {
+            color: #0056b3;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+        
+        @media (max-width: 768px) {
+            .auth-container {
+                flex-direction: column;
+                max-width: 400px;
+            }
+            
+            .auth-sidebar {
+                padding: 40px 20px;
+            }
+            
+            .auth-main {
+                padding: 40px 20px;
+            }
+            
+            .auth-sidebar h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-sidebar">
+            <h1>Welcome Back</h1>
+            <p>Access your attendance and performance tracking dashboard. Choose your role and sign in to continue.</p>
+        </div>
+        
+        <div class="auth-main">
+            <div class="role-tabs">
+                <div class="role-tab active" onclick="switchRole('student')">
+                     Student Login
+                </div>
+                <div class="role-tab" onclick="switchRole('faculty')">
+                     Faculty Login
+                </div>
+            </div>
+            
+            <div th:if="${error}" class="error-message" th:text="${error}"></div>
+            <div th:if="${success}" class="success-message" th:text="${success}"></div>
+            
+            <!-- Student Login Form -->
+            <form class="login-form active" id="student-form" th:action="@{/login}" method="post">
+                <input type="hidden" name="role" value="STUDENT">
+                
+                <div class="form-group">
+                    <label for="student-username">Username or Email</label>
+                    <input type="text" id="student-username" name="username" required 
+                           placeholder="Enter your username or email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="student-password">Password</label>
+                    <input type="password" id="student-password" name="password" required 
+                           placeholder="Enter your password">
+                </div>
+                
+                <button type="submit" class="login-btn">Sign In as Student</button>
+            </form>
+            
+            <!-- Faculty Login Form -->
+            <form class="login-form" id="faculty-form" th:action="@{/login}" method="post">
+                <input type="hidden" name="role" value="FACULTY">
+                
+                <div class="form-group">
+                    <label for="faculty-username">Username or Email</label>
+                    <input type="text" id="faculty-username" name="username" required 
+                           placeholder="Enter your username or email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="faculty-password">Password</label>
+                    <input type="password" id="faculty-password" name="password" required 
+                           placeholder="Enter your password">
+                </div>
+                
+                <button type="submit" class="login-btn">Sign In as Faculty</button>
+            </form>
+            
+            <div class="auth-links">
+                <p>Don't have an account? <a href="/signup">Sign up here</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function switchRole(role) {
+            // Update tabs
+            document.querySelectorAll('.role-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update forms
+            document.querySelectorAll('.login-form').forEach(form => form.classList.remove('active'));
+            document.getElementById(role + '-form').classList.add('active');
+        }
+    </script>
+</body>
+</html>
